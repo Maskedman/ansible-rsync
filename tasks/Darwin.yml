@@ -1,0 +1,38 @@
+---
+# tasks file for rsync (Ubuntu specific)
+
+- name: Download and unpack rsync packages
+  unarchive: url=https://download.samba.org/pub/rsync/src/rsync-3.1.2.tar.gz dest=/tmp/rsync-3.1.2 copy=no
+  tags: rsync
+
+- name: Download and unpack rsync patches
+  unarchive: url=https://download.samba.org/pub/rsync/src/rsync-patches-3.1.2.tar.gz dest=/tmp/rsync-3.1.2 copy=no
+  tags: rsync
+
+- name: apply OSX specific patches to rsync -- fileflags.diff
+  command: patch -p1 <patches/fileflags.diff
+  args:
+    chdir: /tmp/rsync-3.1.2
+  tags: rsync
+
+- name: apply OSX specific patches to rsync -- crtimes.diff
+  command: patch -p1 <patches/crtimes.diff
+  args:
+    chdir: /tmp/rsync-3.1.2
+  tags: rsync
+
+- name: apply OSX specific patches to rsync -- hfs-compression
+  command: patch -p1 <patches/hfs-compression.diff
+  args:
+    chdir: /tmp/rsync-3.1.2
+  tags: rsync
+
+- name: compile & install rsync 3.1.2 with patches
+  command: ./prepare-source && ./configure && make && sudo make install
+  args:
+    chdir: /tmp/rsync-3.1.2
+  tags: rsync
+
+- name: symlink rsync latest in /usr/local/bin/
+  command: sudo rm -f /usr/bin/rsync && sudo ln -s /usr/local/bin/rsync /usr/bin/rsync
+  tags: rsync

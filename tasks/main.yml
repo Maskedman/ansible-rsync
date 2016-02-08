@@ -12,3 +12,7 @@
 - include: Ubuntu.yml
   when: ansible_distribution == "Ubuntu"
   tags: rsync
+
+- include: Darwin.yml
+  when: ansible_distribution == "Darwin"
+  tags: rsync
